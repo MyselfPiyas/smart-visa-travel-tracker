@@ -1,0 +1,13 @@
+{
+  "name": "smart-visa-travel-tracker",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Academic project starter for Smart Visa & Travel Document Tracker",
+  "scripts": {
+    "install:all": "npm install --prefix frontend && npm install --prefix backend",
+    "dev:frontend": "npm run dev --prefix frontend",
+    "dev:backend": "npm run dev --prefix backend",
+    "dev:worker": "npm run dev:worker --prefix backend",
+    "build:frontend": "npm run build --prefix frontend"
+  }
+}

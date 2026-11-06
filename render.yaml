@@ -1,0 +1,89 @@
+services:
+  - type: web
+    name: smart-visa-tracker-api
+    runtime: node
+    plan: 0.5c-512mb
+    rootDir: backend
+    buildCommand: npm ci
+    startCommand: npm start
+    healthCheckPath: /api/health/live
+    maxShutdownDelaySeconds: 60
+    disk:
+      name: private-document-files
+      mountPath: /var/data
+      sizeGB: 1
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: NODE_VERSION
+        value: 22.22.0
+      - key: PORT
+        value: "10000"
+      - key: MONGODB_URI
+        sync: false
+      - key: FRONTEND_ORIGIN
+        sync: false
+      - key: JWT_SECRET
+        generateValue: true
+      - key: JWT_EXPIRES_IN
+        value: 30m
+      - key: AUTH_COOKIE_SAME_SITE
+        value: none
+      - key: AUTH_COOKIE_SECURE
+        value: "true"
+      - key: AUTH_RATE_LIMIT
+        value: "10"
+      - key: TRUST_PROXY_HOPS
+        value: "1"
+      - key: DOCUMENT_STORAGE_PROVIDER
+        value: local
+      - key: DOCUMENT_LOCAL_STORAGE_PATH
+        value: /var/data/private_uploads
+      - key: DOCUMENT_ENCRYPTION_KEY
+        sync: false
+      - key: DOCUMENT_MAX_FILE_SIZE_MB
+        value: "10"
+      - key: DOCUMENT_MAX_FILES_PER_DOCUMENT
+        value: "5"
+      - key: REMINDER_WORKER_ENABLED
+        value: "false"
+
+  - type: worker
+    name: smart-visa-tracker-reminder-worker
+    runtime: node
+    plan: 0.5c-512mb
+    rootDir: backend
+    buildCommand: npm ci
+    startCommand: npm run worker
+    maxShutdownDelaySeconds: 120
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: NODE_VERSION
+        value: 22.22.0
+      - key: MONGODB_URI
+        sync: false
+      - key: SMTP_HOST
+        sync: false
+      - key: SMTP_PORT
+        value: "587"
+      - key: SMTP_SECURE
+        value: "false"
+      - key: SMTP_USER
+        sync: false
+      - key: SMTP_PASSWORD
+        sync: false
+      - key: SMTP_FROM
+        sync: false
+      - key: APP_BASE_URL
+        sync: false
+      - key: REMINDER_WORKER_ENABLED
+        value: "true"
+      - key: REMINDER_SCAN_INTERVAL_MS
+        value: "900000"
+      - key: REMINDER_POLL_INTERVAL_MS
+        value: "60000"
+      - key: REMINDER_BATCH_SIZE
+        value: "50"
+      - key: REMINDER_MAX_ATTEMPTS
+        value: "5"
